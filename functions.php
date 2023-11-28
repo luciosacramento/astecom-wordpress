@@ -504,6 +504,18 @@ add_action( 'rest_api_init', function() {
         ),
     ));
 
+    register_rest_route('astecom/v1', '/paginas-filha/', array(
+        'methods' => 'GET',
+        'callback' => 'obter_paginas_filha_por_id',
+        'args' => array(
+            'id' => array(
+                'validate_callback' => function($param, $request, $key) {
+                    return is_string($param);
+                }
+            ),
+        ),
+    ));
+
     register_rest_route('astecom/v1', '/configuracoes-personalizadas/', array(
         'methods' => 'GET',
         'callback' => 'obter_configuracoes_personalizadas',
@@ -580,6 +592,35 @@ function obter_pagina_por_id($data) {
             // Adicione outros campos personalizados conforme necessário
         );
         return rest_ensure_response($resposta);
+    } else {
+        return new WP_Error('nao_encontrado', 'Página não encontrada', array('status' => 404));
+    }
+}
+
+function obter_paginas_filha_por_id($data) {
+    $pagina_id = $data['id'];
+    $paginas = get_children( array('post_parent' => $pagina_id,'orderby' => 'none') );
+    $resposta = array();
+
+    foreach ($paginas as $pagina) {
+        $resposta[] = array(
+            'id' => $pagina->ID,
+            'titulo' => $pagina->post_title,
+            'conteudo' => apply_filters('the_content', $pagina->post_content)
+        );
+    }
+
+    return rest_ensure_response($resposta);
+
+
+    if ($pagina) {
+        $resposta = array(
+            'id' => $pagina->ID,
+            'titulo' => $pagina->post_title,
+            'conteudo' => apply_filters('the_content', $pagina->post_content),
+            // Adicione outros campos personalizados conforme necessário
+        );
+        return rest_ensure_response($pagina);
     } else {
         return new WP_Error('nao_encontrado', 'Página não encontrada', array('status' => 404));
     }
