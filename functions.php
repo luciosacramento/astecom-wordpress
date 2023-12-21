@@ -525,7 +525,7 @@ add_action( 'rest_api_init', function() {
         'methods' => 'POST',
         'callback' => 'enviar_email',
         'args' => array(
-            'remetente' => array(
+            'email' => array(
                 'required' => true,
                 'validate_callback' => function($param, $request, $key) {
                     return is_email($param);
@@ -642,7 +642,7 @@ add_filter('wp_mail_content_type', function( $content_type ) {
 });
 
 function enviar_email( $data ) {
-    $from = $data['remetente'];
+    $from = $data['email'];
     $telefone = $data['telefone'];
     $nome = $data['nome'];
     $to = get_option('email_field');
@@ -684,8 +684,9 @@ function obter_diretorias($data) {
 
 function obter_demonstrativos_financeiros($data) {
     $args = array(
-        'post_type' => 'demonstrativo_financeiro',
+        'post_type' => 'demon_financeiro',
         'posts_per_page' => -1,
+        'order' => 'ASC',
     );
 
     $demonstrativos_financeiros = get_posts($args);
@@ -700,7 +701,11 @@ function obter_demonstrativos_financeiros($data) {
         );
     }
 
-    return rest_ensure_response($resposta);
+    //$json = json_encode($resposta, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE)
+
+    return $resposta;
+
+   // return rest_ensure_response($json);
 }
 
 function obter_conselho_fiscal($data) {

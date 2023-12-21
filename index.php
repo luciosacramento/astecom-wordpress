@@ -237,7 +237,29 @@ foreach ($diretorias as $item) {
         echo 'Erro ao inserir post: ' . $post_id->get_error_message();
     }
 }
- */
+ 
+ //function obter_demonstrativos_financeiros($data) {
+  $args = array(
+      'post_type' => 'demon_financeiro',
+      'posts_per_page' => -1,
+  );
+
+  $demonstrativos_financeiros = get_posts($args);
+
+  $resposta = array();
+
+  foreach ($demonstrativos_financeiros as $demonstrativo_financeiro) {
+      $resposta[] = array(
+          'id' => $demonstrativo_financeiro->ID,
+          'titulo' => $demonstrativo_financeiro->post_title,
+          'conteudo' => $demonstrativo_financeiro->post_content,
+      );
+  }
+
+  print_r(rest_ensure_response($resposta));
+//}
+
+*/
 
 
 get_footer(); 
